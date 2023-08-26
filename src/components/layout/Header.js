@@ -57,6 +57,11 @@ const Header = () => {
             Contact
           </NavLink>
         </li>
+        <li>
+          <NavLink activeClassName="active" to="/login">
+         Login
+          </NavLink>
+        </li>
       </ul>
     </Box>
   );
@@ -111,6 +116,11 @@ const Header = () => {
                 <li>
                   <NavLink activeClassName="active" to="/contact">
                     Contact
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink activeClassName="active" to="/login">
+                    Login
                   </NavLink>
                 </li>
               </ul>
