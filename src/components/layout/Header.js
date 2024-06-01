@@ -12,9 +12,11 @@ import { NavLink } from "react-router-dom";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import MenuIcon from "@mui/icons-material/Menu";
 import "../../styles/HeaderStyle.css";
+import { getData } from "../../localStorage";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const token = getData("TOKEN");
 
   // handle drawer click
   const drawerClick = () => {
@@ -57,9 +59,16 @@ const Header = () => {
             Contact
           </NavLink>
         </li>
+        {token && (
+          <li>
+            <NavLink activeClassName="active" to="/table">
+              Book Table
+            </NavLink>
+          </li>
+        )}
         <li>
           <NavLink activeClassName="active" to="/login">
-         Login
+            Login
           </NavLink>
         </li>
       </ul>
@@ -118,6 +127,14 @@ const Header = () => {
                     Contact
                   </NavLink>
                 </li>
+
+                {token && (
+                  <li>
+                    <NavLink activeClassName="active" to="/table">
+                      Book Table
+                    </NavLink>
+                  </li>
+                )}
                 <li>
                   <NavLink activeClassName="active" to="/login">
                     Login

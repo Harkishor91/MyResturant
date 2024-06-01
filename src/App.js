@@ -1,36 +1,33 @@
 import React from "react";
-import { Provider } from "react-redux";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { persistStore } from "redux-persist";
-import { PersistGate } from "redux-persist/integration/react";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
-import Menu from "./pages/Menu";
 import Login from "./pages/Login";
+import Menu from "./pages/Menu";
 import PageNotFound from "./pages/PageNotFound";
-import { store } from "./store/Store";
+import TableBook from "./pages/TableBook";
 
 const App = () => {
-  const persistor = persistStore(store);
+  const queryClient = new QueryClient();
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <div>
-          <BrowserRouter>
-            <Routes>
-              <Route exact path="/" element={<Home />} />
-              <Route path="/menu" element={<Menu />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Login />} />
+        <QueryClientProvider client={queryClient}>
+          <div>
+            <BrowserRouter>
+              <Routes>
+                <Route exact path="/" element={<Home />} />
+                <Route path="/menu" element={<Menu />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/table" element={<TableBook />} />
+                <Route path="/login" element={<Login />} />
 
-              <Route path="*" element={<PageNotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </div>
-      </PersistGate>
-    </Provider>
+                <Route path="*" element={<PageNotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </div>
+        </QueryClientProvider>
   );
 };
 
