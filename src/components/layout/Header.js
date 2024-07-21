@@ -1,3 +1,5 @@
+import FastfoodIcon from "@mui/icons-material/Fastfood";
+import MenuIcon from "@mui/icons-material/Menu";
 import {
   AppBar,
   Box,
@@ -7,12 +9,11 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import FastfoodIcon from "@mui/icons-material/Fastfood";
-import MenuIcon from "@mui/icons-material/Menu";
-import "../../styles/HeaderStyle.css";
+import swal from "sweetalert";
 import { getData, isUserLogin, logoutUser } from "../../localStorage";
+import "../../styles/HeaderStyle.css";
 
 const Header = () => {
   const CART_KEY = "cartItems";
@@ -46,11 +47,39 @@ const Header = () => {
   // Handle logout
   const handleLogout = async () => {
     try {
-      await logoutUser();
-      setIsUser(false);
-      navigate("/login");
+      // Confirm logout action
+      const result = await swal({
+        title: "Are you sure?",
+        text: "You will be logged out and the cart will be emptied.",
+        icon: "warning",
+        buttons: ["Cancel", "Logout"],
+        dangerMode: true,
+      });
+
+      if (result) {
+        // Clear cart items from local storage
+        localStorage.removeItem(CART_KEY);
+
+        // Perform the logout operation
+        await logoutUser();
+        setIsUser(false);
+
+        // Notify user about successful logout
+        swal(
+          "Logged out!",
+          "You have been logged out successfully.",
+          "success"
+        ).then(() => {
+          navigate("/login");
+        });
+      }
     } catch (error) {
       console.error("Error logging out", error);
+      swal(
+        "Error!",
+        "There was an issue logging out. Please try again.",
+        "error"
+      );
     }
   };
 
