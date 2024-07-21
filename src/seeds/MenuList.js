@@ -43,4 +43,18 @@ export const MenuList = [
     image: IMAGES.pizza,
     price: 399,
   },
+  {
+    id: 7,
+    name: "Veg. Roll",
+    description: "Veg. Roll is good in taste",
+    image: IMAGES.roll,
+    price: 99,
+  },
+  {
+    id: 8,
+    name: "Cup Cake",
+    description: "Cup cake is good in taste",
+    image: IMAGES.cupcake,
+    price: 149,
+  },
 ];

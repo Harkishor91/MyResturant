@@ -7,21 +7,61 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import MenuIcon from "@mui/icons-material/Menu";
 import "../../styles/HeaderStyle.css";
-import { getData } from "../../localStorage";
+import { getData, isUserLogin, logoutUser } from "../../localStorage";
 
 const Header = () => {
+  const CART_KEY = "cartItems";
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const token = getData("TOKEN");
+  const [isUser, setIsUser] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [isCartEmpty, setIsCartEmpty] = useState(true);
 
-  // handle drawer click
+  // Handle drawer click
   const drawerClick = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  // Check login status on component mount
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const loggedIn = await isUserLogin();
+        setIsUser(loggedIn);
+      } catch (error) {
+        console.log("User is not logged in.");
+        setIsUser(false);
+        console.error("Error checking login status", error);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      setIsUser(false);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error logging out", error);
+    }
+  };
+
+  useEffect(() => {
+    const storedCartItems = getData(CART_KEY) || [];
+    setCartItems(storedCartItems);
+  }, []);
+
+  useEffect(() => {
+    setIsCartEmpty(cartItems.length === 0);
+  });
 
   const drawer = (
     <Box
@@ -49,6 +89,13 @@ const Header = () => {
             Menu
           </NavLink>
         </li>
+        {!isCartEmpty && (
+          <li>
+            <NavLink activeClassName="active" to="/addToCart">
+              {`Cart (${cartItems.length})`}
+            </NavLink>
+          </li>
+        )}
         <li>
           <NavLink activeClassName="active" to="/about">
             About
@@ -59,18 +106,31 @@ const Header = () => {
             Contact
           </NavLink>
         </li>
-        {token && (
+        {/* {isUser && (
           <li>
             <NavLink activeClassName="active" to="/table">
               Book Table
             </NavLink>
           </li>
+        )} */}
+
+        {isUser ? (
+          <li>
+            <NavLink
+              activeClassName="active"
+              to="/login"
+              onClick={handleLogout}
+            >
+              Logout
+            </NavLink>
+          </li>
+        ) : (
+          <li>
+            <NavLink activeClassName="active" to="/login">
+              Login
+            </NavLink>
+          </li>
         )}
-        <li>
-          <NavLink activeClassName="active" to="/login">
-            Login
-          </NavLink>
-        </li>
       </ul>
     </Box>
   );
@@ -117,6 +177,13 @@ const Header = () => {
                     Menu
                   </NavLink>
                 </li>
+                {!isCartEmpty && (
+                  <li>
+                    <NavLink activeClassName="active" to="/addToCart">
+                      {`Cart (${cartItems.length})`}
+                    </NavLink>
+                  </li>
+                )}
                 <li>
                   <NavLink activeClassName="active" to="/about">
                     About
@@ -127,19 +194,32 @@ const Header = () => {
                     Contact
                   </NavLink>
                 </li>
-
-                {token && (
+                {/* 
+                {isUser && (
                   <li>
                     <NavLink activeClassName="active" to="/table">
                       Book Table
                     </NavLink>
                   </li>
+                )} */}
+
+                {isUser ? (
+                  <li>
+                    <NavLink
+                      activeClassName="active"
+                      to="/login"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </NavLink>
+                  </li>
+                ) : (
+                  <li>
+                    <NavLink activeClassName="active" to="/login">
+                      Login
+                    </NavLink>
+                  </li>
                 )}
-                <li>
-                  <NavLink activeClassName="active" to="/login">
-                    Login
-                  </NavLink>
-                </li>
               </ul>
             </Box>
           </Toolbar>
