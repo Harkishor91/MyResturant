@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import { loginUser, loginUserInfo, registerUser } from "../localStorage";
+import swal from 'sweetalert';
 
 const Login = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,7 +20,6 @@ const Login = () => {
   useEffect(() => {
     const checkUser = async () => {
       const userInfo = await loginUserInfo();
-      alert(JSON.stringify(userInfo));
       if (userInfo) {
         setIsLoggedIn(true);
       }
@@ -30,12 +30,17 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    
     try {
       await loginUser(loginEmail, loginPassword);
       setIsLoggedIn(true);
-      navigate("/");
+      swal("Success!", "You have logged in successfully.", "success")
+        .then(() => {
+          navigate("/");
+        });
     } catch (error) {
       setError(error.message);
+      swal("Error!", error.message, "error" );
     }
   };
 
@@ -49,6 +54,7 @@ const Login = () => {
         registerPhone,
         registerPassword
       );
+      swal("Success!", "You have register successfully.", "success")
       setView("login");
     } catch (error) {
       setError(error.message);

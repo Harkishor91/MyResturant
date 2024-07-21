@@ -10,9 +10,10 @@ import {
 import React, { useState, useEffect } from "react";
 import Layout from "../components/layout/Layout";
 import { MenuList } from "../seeds/MenuList";
-import {  saveData, getData, removeData } from "../localStorage";
+import { saveData, getData } from "../localStorage";
+import swal from "sweetalert";
 
-const CART_KEY = 'cartItems';
+const CART_KEY = "cartItems";
 
 const Menu = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -27,19 +28,44 @@ const Menu = () => {
     const updatedCartItems = [...cartItems, item];
     setCartItems(updatedCartItems);
     saveData(CART_KEY, updatedCartItems);
+    swal("Success!", "Item added successfully.", "success");
   };
 
-  const handleRemoveFromCart = (item) => {
-    const updatedCartItems = cartItems.filter(cartItem => cartItem.id !== item.id);
-    setCartItems(updatedCartItems);
-    saveData(CART_KEY, updatedCartItems);
+  const handleRemoveFromCart = async (item) => {
+    // Confirm remove item  action
+    const result = await swal({
+      title: "Are you sure?",
+      text: "You want to remove this item from cart your cart ",
+      icon: "warning",
+      buttons: ["Cancel", "Remove"],
+      dangerMode: true,
+    });
+    if (result) {
+      swal("Remove Item", "Item removed from your cart successfully.", "success")
+        .then(() => {
+          const updatedCartItems = cartItems.filter(
+            (cartItem) => cartItem.id !== item.id
+          );
+          setCartItems(updatedCartItems);
+          saveData(CART_KEY, updatedCartItems);
+        })
+        .catch((err) => {
+          swal(
+            "Error!",
+            "There was an issue to remove item. Please try again.",
+            "error"
+          );
+        });
+    }
   };
 
   return (
     <Layout>
       <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
         {MenuList?.map((item) => {
-          const isInCart = cartItems.some(cartItem => cartItem.id === item.id);
+          const isInCart = cartItems.some(
+            (cartItem) => cartItem.id === item.id
+          );
 
           return (
             <Card

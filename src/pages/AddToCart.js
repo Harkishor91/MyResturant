@@ -1,3 +1,4 @@
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
   Button,
@@ -5,13 +6,13 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
-  Typography,
   IconButton,
+  Typography,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import React, { useEffect, useState } from "react";
-import { getData, saveData, removeData } from "../localStorage";
+import swal from "sweetalert";
 import Layout from "../components/layout/Layout";
+import { getData, removeData, saveData } from "../localStorage";
 
 const CART_KEY = "cartItems";
 
@@ -23,15 +24,60 @@ const AddToCart = () => {
     setCartItems(storedCartItems);
   }, []);
 
-  const handleDelete = (itemId) => {
-    const updatedCartItems = cartItems.filter((item) => item.id !== itemId);
-    setCartItems(updatedCartItems);
-    saveData(CART_KEY, updatedCartItems); // Save updated cart to storage
+  const handleDelete = async (itemId) => {
+    // Confirm delete item  action
+    const result = await swal({
+      title: "Are you sure?",
+      text: "You want to delete this item from your cart ",
+      icon: "warning",
+      buttons: ["Cancel", "Remove"],
+      dangerMode: true,
+    });
+    if (result) {
+      swal(
+        "Delete Item",
+        "Item deleted from your cart successfully.",
+        "success"
+      )
+        .then(() => {
+          const updatedCartItems = cartItems.filter(
+            (item) => item.id !== itemId
+          );
+          setCartItems(updatedCartItems);
+          saveData(CART_KEY, updatedCartItems); // Save updated cart to storage
+        })
+        .catch((err) => {
+          swal(
+            "Error!",
+            "There was an issue to delete item. Please try again.",
+            "error"
+          );
+        });
+    }
   };
 
-  const handleCheckout = () => {
-    removeData(CART_KEY); // Clear cart from storage
-    setCartItems([]); // Clear cart from state
+  const handleCheckout = async () => {
+    const result = await swal({
+      title: "Are you sure?",
+      text: "You want to order these items.",
+      icon: "success",
+      buttons: ["Cancel", "Confirm"],
+      dangerMode: true,
+    });
+    if (result) {
+      swal("Success!", "your order placed successfully", "success")
+        .then(() => {
+          removeData(CART_KEY); // Clear cart from storage
+          setCartItems([]); // Clear cart from state
+        })
+        .catch((err) => {
+          swal(
+            "Error!",
+            "There was an issue with place your order. Please try again.",
+            "error"
+          );
+        });
+    }
   };
 
   const isCartEmpty = cartItems.length === 0;
