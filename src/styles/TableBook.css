@@ -1,0 +1,28 @@
+/* light blue color code   #CBB4F4 */
+
+.container {
+  background-color: transparent;
+  opacity: 0.9;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.heading {
+  font-size: 32px;
+  color: goldenrod ;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.cardWrapper {
+  margin: 10px;
+  width: calc(
+    50% - 20px
+  ); /* Adjust width to fit two cards in a row with margin */
+  border-radius: 5px;
+  border-color: black;
+  border-width: 2px;
+}
+
